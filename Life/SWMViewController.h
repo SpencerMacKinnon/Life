@@ -8,7 +8,11 @@
 
 #import <UIKit/UIKit.h>
 #import <GLKit/GLKit.h>
+#import "SWMTile.h"
 
 @interface SWMViewController : GLKViewController
+{
+    NSMutableArray *models;
+}
 
 @end

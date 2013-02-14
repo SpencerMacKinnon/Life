@@ -23,6 +23,11 @@
 		016FCA4716BA4F280081975E /* SWMViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 016FCA4616BA4F280081975E /* SWMViewController.m */; };
 		016FCA4A16BA4F280081975E /* SWMViewController_iPhone.xib in Resources */ = {isa = PBXBuildFile; fileRef = 016FCA4816BA4F280081975E /* SWMViewController_iPhone.xib */; };
 		016FCA4D16BA4F280081975E /* SWMViewController_iPad.xib in Resources */ = {isa = PBXBuildFile; fileRef = 016FCA4B16BA4F280081975E /* SWMViewController_iPad.xib */; };
+		01E9B7AC16C849F90076AD64 /* SWMModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 01E9B7AB16C849F90076AD64 /* SWMModel.m */; };
+		01E9B7AF16C84D0B0076AD64 /* SWMTile.m in Sources */ = {isa = PBXBuildFile; fileRef = 01E9B7AE16C84D0B0076AD64 /* SWMTile.m */; };
+		01E9B7B516C8C2C00076AD64 /* SWMVector2D.m in Sources */ = {isa = PBXBuildFile; fileRef = 01E9B7B416C8C2C00076AD64 /* SWMVector2D.m */; };
+		01E9B7B816C8C4D30076AD64 /* SWMVector3D.m in Sources */ = {isa = PBXBuildFile; fileRef = 01E9B7B716C8C4D30076AD64 /* SWMVector3D.m */; };
+		01E9B7BB16C8C5AD0076AD64 /* SWMVector4D.m in Sources */ = {isa = PBXBuildFile; fileRef = 01E9B7BA16C8C5AD0076AD64 /* SWMVector4D.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -47,6 +52,16 @@
 		016FCA4616BA4F280081975E /* SWMViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SWMViewController.m; sourceTree = "<group>"; };
 		016FCA4916BA4F280081975E /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/SWMViewController_iPhone.xib; sourceTree = "<group>"; };
 		016FCA4C16BA4F280081975E /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/SWMViewController_iPad.xib; sourceTree = "<group>"; };
+		01E9B7AA16C849F90076AD64 /* SWMModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SWMModel.h; sourceTree = "<group>"; };
+		01E9B7AB16C849F90076AD64 /* SWMModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SWMModel.m; sourceTree = "<group>"; };
+		01E9B7AD16C84D0B0076AD64 /* SWMTile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SWMTile.h; sourceTree = "<group>"; };
+		01E9B7AE16C84D0B0076AD64 /* SWMTile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SWMTile.m; sourceTree = "<group>"; };
+		01E9B7B316C8C2C00076AD64 /* SWMVector2D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SWMVector2D.h; sourceTree = "<group>"; };
+		01E9B7B416C8C2C00076AD64 /* SWMVector2D.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SWMVector2D.m; sourceTree = "<group>"; };
+		01E9B7B616C8C4D30076AD64 /* SWMVector3D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SWMVector3D.h; sourceTree = "<group>"; };
+		01E9B7B716C8C4D30076AD64 /* SWMVector3D.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SWMVector3D.m; sourceTree = "<group>"; };
+		01E9B7B916C8C5AD0076AD64 /* SWMVector4D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SWMVector4D.h; sourceTree = "<group>"; };
+		01E9B7BA16C8C5AD0076AD64 /* SWMVector4D.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SWMVector4D.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -106,6 +121,16 @@
 				016FCA4816BA4F280081975E /* SWMViewController_iPhone.xib */,
 				016FCA4B16BA4F280081975E /* SWMViewController_iPad.xib */,
 				016FCA3016BA4F280081975E /* Supporting Files */,
+				01E9B7AA16C849F90076AD64 /* SWMModel.h */,
+				01E9B7AB16C849F90076AD64 /* SWMModel.m */,
+				01E9B7AD16C84D0B0076AD64 /* SWMTile.h */,
+				01E9B7AE16C84D0B0076AD64 /* SWMTile.m */,
+				01E9B7B316C8C2C00076AD64 /* SWMVector2D.h */,
+				01E9B7B416C8C2C00076AD64 /* SWMVector2D.m */,
+				01E9B7B616C8C4D30076AD64 /* SWMVector3D.h */,
+				01E9B7B716C8C4D30076AD64 /* SWMVector3D.m */,
+				01E9B7B916C8C5AD0076AD64 /* SWMVector4D.h */,
+				01E9B7BA16C8C5AD0076AD64 /* SWMVector4D.m */,
 			);
 			path = Life;
 			sourceTree = "<group>";
@@ -197,6 +222,11 @@
 				016FCA3616BA4F280081975E /* main.m in Sources */,
 				016FCA3A16BA4F280081975E /* SWMAppDelegate.m in Sources */,
 				016FCA4716BA4F280081975E /* SWMViewController.m in Sources */,
+				01E9B7AC16C849F90076AD64 /* SWMModel.m in Sources */,
+				01E9B7AF16C84D0B0076AD64 /* SWMTile.m in Sources */,
+				01E9B7B516C8C2C00076AD64 /* SWMVector2D.m in Sources */,
+				01E9B7B816C8C4D30076AD64 /* SWMVector3D.m in Sources */,
+				01E9B7BB16C8C5AD0076AD64 /* SWMVector4D.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -329,6 +359,7 @@
 				016FCA5216BA4F280081975E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
