@@ -8,9 +8,16 @@
 
 #import "SWMModel.h"
 
+#define BUFFER_OFFSET(i) ((char *)NULL + (i))
+
 @implementation SWMModel
 
-@synthesize modelViewMatrix;
+@synthesize modelViewMatrix = _modelViewMatrix;
+@synthesize modelViewProjectionMatrix = _modelViewProjectionMatrix;
+@synthesize normalMatrix = _normalMatrix;
+@synthesize NUM_UNIFORMS, UNIFORM_MODELVIEWPROJECTION_MATRIX, UNIFORM_NORMAL_MATRIX;
+@synthesize vertShaderPathname, fragShaderPathname;
+@synthesize numberOfFloatsInVertices, numberOfVertices, sizeOfVerticies;
 
 -(id)init{
     self = [super init];
@@ -23,46 +30,118 @@
 
 - (NSMutableData*)vertexData{
     
-    int verticeByteSize = sizeof(vertex);
+    int verticeByteSize = sizeof(_vertex);
     
-    NSMutableData *vertexData = [NSMutableData dataWithCapacity:verticeByteSize];
+    NSMutableData *vertexMutableData = [NSMutableData dataWithCapacity:verticeByteSize];
     
     for (int i=0; i < numberOfVertices; i++) {
-        [vertexData appendBytes:&vertex[i].x length:sizeof(float)];
-        [vertexData appendBytes:&vertex[i].y length:sizeof(float)];
-        [vertexData appendBytes:&vertex[i].z length:sizeof(float)];
+        [vertexMutableData appendBytes:&_vertex[i].x length:sizeof(float)];
+        [vertexMutableData appendBytes:&_vertex[i].y length:sizeof(float)];
+        [vertexMutableData appendBytes:&_vertex[i].z length:sizeof(float)];
     }
     
-    return vertexData;
+    return vertexMutableData;
 }
 
 - (unsigned long)sizeOfVertices {
     
-    return sizeof(vertex);
+    return sizeof(_vertex);
 }
 
-- (unsigned long)numberOfVertices {
-    return numberOfVertices;
+- (BOOL)loadShaders{
+    return YES;
 }
 
-- (unsigned long)numberOfFloatsInVertices {
-    return 3 * [self numberOfVertices];
+- (BOOL)compileShader:(GLuint *)shader type:(GLenum)type file:(NSString *)file
+{
+    GLint status;
+    const GLchar *source;
+    
+    source = (GLchar *)[[NSString stringWithContentsOfFile:file encoding:NSUTF8StringEncoding error:nil] UTF8String];
+    if (!source) {
+        NSLog(@"Failed to load vertex shader");
+        return NO;
+    }
+    
+    *shader = glCreateShader(type);
+    glShaderSource(*shader, 1, &source, NULL);
+    glCompileShader(*shader);
+    
+#if defined(DEBUG)
+    GLint logLength;
+    glGetShaderiv(*shader, GL_INFO_LOG_LENGTH, &logLength);
+    if (logLength > 0) {
+        GLchar *log = (GLchar *)malloc(logLength);
+        glGetShaderInfoLog(*shader, logLength, &logLength, log);
+        NSLog(@"Shader compile log:\n%s", log);
+        free(log);
+    }
+#endif
+    
+    glGetShaderiv(*shader, GL_COMPILE_STATUS, &status);
+    if (status == 0) {
+        glDeleteShader(*shader);
+        return NO;
+    }
+    
+    return YES;
 }
 
-- (GLuint)vertShader {
-    return vertShader;
+- (void)glkView:(GLKView *)view drawInRect:(CGRect)rect{
+    return;
 }
 
-- (GLuint)fragShader {
-    return fragShader;
+- (BOOL)linkProgram:(GLuint)prog
+{
+    GLint status;
+    glLinkProgram(prog);
+    
+#if defined(DEBUG)
+    GLint logLength;
+    glGetProgramiv(prog, GL_INFO_LOG_LENGTH, &logLength);
+    if (logLength > 0) {
+        GLchar *log = (GLchar *)malloc(logLength);
+        glGetProgramInfoLog(prog, logLength, &logLength, log);
+        NSLog(@"Program link log:\n%s", log);
+        free(log);
+    }
+#endif
+    
+    glGetProgramiv(prog, GL_LINK_STATUS, &status);
+    if (status == 0) {
+        return NO;
+    }
+    
+    return YES;
 }
 
-- (NSString *)vertShaderPathname {
-    return vertShaderPathname;
+- (BOOL)validateProgram:(GLuint)prog
+{
+    GLint logLength, status;
+    
+    glValidateProgram(prog);
+    glGetProgramiv(prog, GL_INFO_LOG_LENGTH, &logLength);
+    if (logLength > 0) {
+        GLchar *log = (GLchar *)malloc(logLength);
+        glGetProgramInfoLog(prog, logLength, &logLength, log);
+        NSLog(@"Program validate log:\n%s", log);
+        free(log);
+    }
+    
+    glGetProgramiv(prog, GL_VALIDATE_STATUS, &status);
+    if (status == 0) {
+        return NO;
+    }
+    
+    return YES;
 }
 
-- (NSString *)fragShaderPathname {
-    return fragShaderPathname;
+- (BOOL)setupGL{
+    return YES;
+}
+
+- (void)tearDownGL{
+    return;
 }
 
 @end

@@ -8,25 +8,51 @@
 
 #import <Foundation/Foundation.h>
 #import <GLKit/GLKit.h>
-#include "SWMVector3D.h"
 
 @interface SWMModel : NSObject
 {
-    GLKVector3 vertex[12];
-    GLuint vertShader, fragShader;
+    GLKMatrix4 _modelViewMatrix, _modelViewProjectionMatrix;
+    GLKMatrix3 _normalMatrix;
+    GLKVector3 *_vertex;
+    
+    GLuint _program, _vertexBuffer, _vertShader, _fragShader;    
+    // Uniform index.
+    enum
+    {
+        UNIFORM_MODELVIEWPROJECTION_MATRIX,
+        UNIFORM_NORMAL_MATRIX,
+        NUM_UNIFORMS
+    };
+    GLint uniforms[NUM_UNIFORMS];
+    
+    // Attribute index.
+    enum
+    {
+        ATTRIB_VERTEX,
+        ATTRIB_NORMAL,
+        NUM_ATTRIBUTES
+    };
+    
+    NSMutableData *vertexData;
     NSString *vertShaderPathname, *fragShaderPathname;
-    unsigned int numberOfVertices;
+    unsigned long numberOfFloatsInVertices, numberOfVertices, sizeOfVerticies;
 }
 
-@property (nonatomic) GLKMatrix4 *modelViewMatrix;
+@property GLKMatrix4 modelViewMatrix, modelViewProjectionMatrix;
+@property GLKMatrix3 normalMatrix;
+//@property GLuint program, vertShader, fragShader;
+//@property GLuint *vertexArray, *vertexBuffer;
+@property GLuint NUM_UNIFORMS, UNIFORM_MODELVIEWPROJECTION_MATRIX, UNIFORM_NORMAL_MATRIX;
+@property NSString *vertShaderPathname, *fragShaderPathname;
+@property unsigned long numberOfFloatsInVertices, numberOfVertices, sizeOfVerticies;
 
-- (GLuint) vertShader;
-- (GLuint) fragShader;
+- (BOOL)compileShader:(GLuint *)shader type:(GLenum)type file:(NSString *)file;
+- (void)glkView:(GLKView *)view drawInRect:(CGRect)rect;
+- (BOOL)linkProgram:(GLuint)prog;
+- (BOOL)loadShaders;
+- (BOOL)validateProgram:(GLuint)prog;
 - (NSMutableData*)vertexData;
-- (NSString *) vertShaderPathname;
-- (NSString *) fragShaderPathname;
-- (unsigned long) sizeOfVertices;
-- (unsigned long) numberOfVertices;
-- (unsigned long) numberOfFloatsInVertices;
+- (BOOL)setupGL;
+- (void)tearDownGL;
 
 @end
