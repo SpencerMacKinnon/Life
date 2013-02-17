@@ -9,10 +9,11 @@
 #import <UIKit/UIKit.h>
 #import <GLKit/GLKit.h>
 #import "SWMTile.h"
+#import "SWMGrid.h"
 
 @interface SWMViewController : GLKViewController
 {
-    NSMutableArray *models;
+    SWMGrid *_grid;
 }
 
 @end

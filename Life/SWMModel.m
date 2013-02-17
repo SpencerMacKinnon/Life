@@ -15,7 +15,6 @@
 @synthesize modelViewMatrix = _modelViewMatrix;
 @synthesize modelViewProjectionMatrix = _modelViewProjectionMatrix;
 @synthesize normalMatrix = _normalMatrix;
-@synthesize NUM_UNIFORMS, UNIFORM_MODELVIEWPROJECTION_MATRIX, UNIFORM_NORMAL_MATRIX;
 @synthesize vertShaderPathname, fragShaderPathname;
 @synthesize numberOfFloatsInVertices, numberOfVertices, sizeOfVerticies;
 

@@ -27,10 +27,7 @@
 {
     [super viewDidLoad];
     
-    SWMTile *firstTile = [[SWMTile alloc] init];
-    SWMTile *secondTile = [[SWMTile alloc] init2];
-    
-    models = [[NSMutableArray alloc] initWithObjects:firstTile, secondTile, nil];
+    _grid = [[SWMGrid alloc] init];
     
     self.context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
 
@@ -79,7 +76,7 @@
     glGenVertexArraysOES(1, &_vertexArray);
     glBindVertexArrayOES(_vertexArray);
     
-    for (SWMTile *tile in models) {
+    for (SWMTile *tile in [_grid tiles]) {
         
         [tile setupGL];
     }
@@ -92,7 +89,7 @@
     
     glDeleteVertexArraysOES(1, &_vertexArray);
     
-    for (SWMTile *tile in models) {
+    for (SWMTile *tile in [_grid tiles]) {
         [tile tearDownGL];
     }
 }
@@ -105,7 +102,7 @@
     
     GLKMatrix4 projectionMatrix = GLKMatrix4MakePerspective(GLKMathDegreesToRadians(65.0f), aspect, 0.1f, 100.0f);
     
-    for (SWMTile *tile in models) {
+    for (SWMTile *tile in [_grid tiles]) {
         GLKMatrix4 modelViewMatrix = [tile modelViewMatrix];
         
         GLKMatrix3 normalMatrix = GLKMatrix3InvertAndTranspose(GLKMatrix4GetMatrix3(modelViewMatrix), NULL);
@@ -123,7 +120,7 @@
     
     glBindVertexArrayOES(_vertexArray);
     
-    for (SWMTile *tile in models) {
+    for (SWMTile *tile in [_grid tiles]) {
         
         [tile glkView:view drawInRect:rect];
     }
