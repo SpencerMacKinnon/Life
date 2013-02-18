@@ -14,6 +14,8 @@
 @interface SWMViewController : GLKViewController
 {
     SWMGrid *_grid;
+    GLKMatrix4 _projectionMatrix;
+    float _aspect;
 }
 
 @end

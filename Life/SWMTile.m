@@ -25,18 +25,18 @@ const int TOTAL_VERTICES = 12;
         _vertex = (GLKVector3 *)malloc(TOTAL_VERTICES * sizeof(GLKVector3));
         
         GLKVector4 diffuseLightColourBlack = GLKVector4Make(0.0, 0.0, 0.0, 0.0);
-        GLKMatrix4 mvMatrix = GLKMatrix4MakeTranslation(0.06f, 0.0f, -2.5f);
+        GLKMatrix4 mvMatrix = GLKMatrix4MakeTranslation(0.0f, 0.0f, 0.0f);
         
         GLfloat squareVertexData [36]= {
             // Data layout for each line below is:
             // positionX, positionY, positionZ,     normalX, normalY, normalZ,
             
-            0.05f, 0.05f, -0.5f,          0.0f, 0.0f, 1.0f,
-            -0.05f, 0.05f, -0.5f,         0.0f, 0.0f, 1.0f,
-            0.05f, -0.05f, -0.5f,         0.0f, 0.0f, 1.0f,
-            0.05f, -0.05f, -0.5f,         0.0f, 0.0f, 1.0f,
-            -0.05f, 0.05f, -0.5f,         0.0f, 0.0f, 1.0f,
-            -0.05f, -0.05f, -0.5f,        0.0f, 0.0f, 1.0f
+            0.0015f, 0.0015f, -0.1f,          0.0f, 0.0f, 1.0f,
+            -0.0015f, 0.0015f, -0.1f,         0.0f, 0.0f, 1.0f,
+            0.0015f, -0.0015f, -0.1f,         0.0f, 0.0f, 1.0f,
+            0.0015f, -0.0015f, -0.1f,         0.0f, 0.0f, 1.0f,
+            -0.0015f, 0.0015f, -0.1f,         0.0f, 0.0f, 1.0f,
+            -0.0015f, -0.0015f, -0.1f,        0.0f, 0.0f, 1.0f
             
         };
         
@@ -61,13 +61,11 @@ const int TOTAL_VERTICES = 12;
     return self;
 }
 
-- (id)init2{
+- (id)initWith:(GLKMatrix4)mvMatrix andColour:(GLKVector4)colour{
     self = [self init];
     if (self) {
-        GLKMatrix4 mvMatrix = GLKMatrix4MakeTranslation(-0.06f, 0.0f, -2.5f);
         [self setModelViewMatrix:mvMatrix];
-        GLKVector4 diffuseLightColourRed = GLKVector4Make(1.0, 0.0, 0.0, 0.0);
-        [self setDiffuseLightColour:diffuseLightColourRed];
+        [self setDiffuseLightColour:colour];
     }
     
     return self;

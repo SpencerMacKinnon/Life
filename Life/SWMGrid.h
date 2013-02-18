@@ -11,8 +11,10 @@
 
 @interface SWMGrid : NSObject {
     NSMutableArray *_tiles;
+    GLKVector3 _topLeftBoundary, _topRightBoundary, _bottomLeftBoundary, _bottomRightBoundary;
 }
 
 @property NSMutableArray *tiles;
+@property GLKVector3 topLeftBoundary, topRightBoundary, bottomLeftBoundary, bottomRightBoundary;
 
 @end

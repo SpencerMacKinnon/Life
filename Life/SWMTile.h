@@ -20,6 +20,6 @@ extern const int TOTAL_VERTICES;
 @property (nonatomic) GLKVector4 diffuseLightColour;
 @property GLuint colourIndex;
 
--(id) init2;
+-(id)initWith:(GLKMatrix4)mvMatrix andColour:(GLKVector4)colour;
 
 @end

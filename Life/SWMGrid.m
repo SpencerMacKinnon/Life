@@ -11,12 +11,16 @@
 @implementation SWMGrid
 
 @synthesize tiles = _tiles;
+@synthesize topLeftBoundary = _topLeftBoundary;
+@synthesize topRightBoundary = _topRightBoundary;
+@synthesize bottomLeftBoundary = _bottomLeftBoundary;
+@synthesize bottomRightBoundary = _bottomRightBoundary;
 
 -(id)init{
     self = [super init];
     if (self) {
         SWMTile *firstTile = [[SWMTile alloc] init];
-        SWMTile *secondTile = [[SWMTile alloc] init2];
+        SWMTile *secondTile = [[SWMTile alloc] init];
         
         _tiles = [[NSMutableArray alloc] initWithObjects:firstTile, secondTile, nil];
     }

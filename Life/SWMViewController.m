@@ -28,6 +28,8 @@
     [super viewDidLoad];
     
     _grid = [[SWMGrid alloc] init];
+    _aspect = fabsf(self.view.bounds.size.width / self.view.bounds.size.height);
+    _projectionMatrix = GLKMatrix4MakePerspective(GLKMathDegreesToRadians(65.0f), _aspect, 0.1f, 100.0f);
     
     self.context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
 
@@ -98,19 +100,97 @@
 
 - (void)update
 {
-    float aspect = fabsf(self.view.bounds.size.width / self.view.bounds.size.height);
-    
-    GLKMatrix4 projectionMatrix = GLKMatrix4MakePerspective(GLKMathDegreesToRadians(65.0f), aspect, 0.1f, 100.0f);
+    _aspect = fabsf(self.view.bounds.size.width / self.view.bounds.size.height);
+    _projectionMatrix = GLKMatrix4MakePerspective(GLKMathDegreesToRadians(65.0f), _aspect, 0.1f, 100.0f);
     
     for (SWMTile *tile in [_grid tiles]) {
         GLKMatrix4 modelViewMatrix = [tile modelViewMatrix];
         
         GLKMatrix3 normalMatrix = GLKMatrix3InvertAndTranspose(GLKMatrix4GetMatrix3(modelViewMatrix), NULL);
-        GLKMatrix4 modelViewProjectionMatrix = GLKMatrix4Multiply(projectionMatrix, modelViewMatrix);
+        GLKMatrix4 modelViewProjectionMatrix = GLKMatrix4Multiply(_projectionMatrix, modelViewMatrix);
         
         [tile setNormalMatrix:normalMatrix];
         [tile setModelViewProjectionMatrix:modelViewProjectionMatrix];
     }
+    
+    [self recalculateScreenBoundariesForGridWithProjectionMatrix:_projectionMatrix];
+}
+
+- (void)recalculateScreenBoundariesForGridWithProjectionMatrix:(GLKMatrix4)projectionMatrix {
+    
+    float viewPortOriginX = self.view.bounds.origin.x;
+    float viewPortOriginY = self.view.bounds.origin.y;
+    float viewPortWidth = self.view.bounds.size.width;
+    float viewPortHeight = self.view.bounds.size.height;
+    
+    GLKVector4 viewPort = GLKVector4Make(viewPortOriginX, viewPortOriginY, viewPortWidth, viewPortHeight);
+    
+    GLKMatrix4 identityMatrix = GLKMatrix4Make(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
+    
+    GLKVector3 topLeftScreenCoordinate = [self worldSpacePixelLocation:viewPortOriginX withWindowCoordinateY:viewPortOriginY withViewPort:viewPort withModelViewMatrix:identityMatrix withProjectionMatrix:projectionMatrix];
+    GLKVector3 topRightScreenCoordinate = [self worldSpacePixelLocation:viewPortWidth withWindowCoordinateY:viewPortOriginY withViewPort:viewPort withModelViewMatrix:identityMatrix withProjectionMatrix:projectionMatrix];
+    GLKVector3 bottomLeftScreenCoordinate = [self worldSpacePixelLocation:viewPortOriginX withWindowCoordinateY:viewPortHeight withViewPort:viewPort withModelViewMatrix:identityMatrix withProjectionMatrix:projectionMatrix];
+    GLKVector3 bottomRightScreenCoordinate = [self worldSpacePixelLocation:viewPortWidth withWindowCoordinateY:viewPortHeight withViewPort:viewPort withModelViewMatrix:identityMatrix withProjectionMatrix:projectionMatrix];
+    
+    [_grid setTopLeftBoundary:topLeftScreenCoordinate];
+    [_grid setTopRightBoundary:topRightScreenCoordinate];
+    [_grid setBottomLeftBoundary:bottomLeftScreenCoordinate];
+    [_grid setBottomRightBoundary:bottomRightScreenCoordinate];
+}
+
+- (GLKVector3)worldSpacePixelLocation:(CGFloat)windowCoordinateX withWindowCoordinateY:(CGFloat)windowCoordinateY withViewPort:(GLKVector4) viewPort withModelViewMatrix:(GLKMatrix4) modelViewMatrix withProjectionMatrix:(GLKMatrix4) projectionMatrix {
+    
+    float winX = windowCoordinateX;
+    float winY = viewPort.w - windowCoordinateY; //Invert this as OpenGL flips the Y coordinate
+    float winZ = 0.0f;
+    
+    float posX, posY, posZ;
+    
+    glReadPixels(windowCoordinateX, (int)winY, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &winZ);// Not used, will always be 0
+    
+    // We only need to call this once, with the near view frustum (-0.1 on the frustum corresponding to winZ = 0.0).
+    // This is because we are basically treating our 3D world as a 2D one. If it was a real 3D implementation,
+    // we would have to call unProject again, with winZ = 1.0f. This would allow us to create a ray, and then
+    // intersect anything along that ray.
+    [self unProjectWith:winX winY:winY winZ:winZ modelViewMatrix:modelViewMatrix projectionMatrix:projectionMatrix viewPort:viewPort posX:&posX posY:&posY posZ:&posZ];
+    
+    return GLKVector3Make(posX, posY, posZ);
+}
+
+- (BOOL)unProjectWith:(float)winX winY:(float)winY winZ:(float)winZ modelViewMatrix:(GLKMatrix4)modelViewMatrix projectionMatrix:(GLKMatrix4)projectionMatrix viewPort:(GLKVector4)viewPort posX:(float *)posX posY:(float *)posY posZ:(float *)posZ {
+    
+    bool isInvertible = false;
+    
+    GLKMatrix4 modelViewProjectionMatrixInverted = GLKMatrix4Invert(GLKMatrix4Multiply(projectionMatrix, modelViewMatrix), &isInvertible);
+    
+    if (!isInvertible) // Double check that we sucessfully inverted the matrix
+        return false;
+    
+    GLKVector4 inWindowCoordinates = GLKVector4Make(winX, winY, winZ, 1.0f);
+    
+    inWindowCoordinates.x = (inWindowCoordinates.x - viewPort.x) / viewPort.z; // Convert our point to a range between 0..1
+    inWindowCoordinates.y = (inWindowCoordinates.y - viewPort.y) / viewPort.w;
+    
+    inWindowCoordinates.x = inWindowCoordinates.x * 2.0f - 1.0f; // Now move it to a range of -1..1, the view coordinates
+    inWindowCoordinates.y = inWindowCoordinates.y * 2.0f - 1.0f;
+    inWindowCoordinates.z = inWindowCoordinates.z * 2.0f - 1.0f;
+    
+    GLKVector4 outWorldCoordinates = GLKMatrix4MultiplyVector4(modelViewProjectionMatrixInverted, inWindowCoordinates);
+    
+    if (outWorldCoordinates.w == 0.0) // Ensure the determinate is not zero
+        return false;
+    
+    float invertedW = 1.0f / outWorldCoordinates.w; // Divide by W to get into world space. Inversion and multiplication is faster than division.
+    
+    outWorldCoordinates.x *= invertedW;
+    outWorldCoordinates.y *= invertedW;
+    outWorldCoordinates.z *= invertedW;
+    
+    *posX = outWorldCoordinates.x;
+    *posY = outWorldCoordinates.y;
+    *posZ = outWorldCoordinates.z;
+    
+    return true;
 }
 
 - (void)glkView:(GLKView *)view drawInRect:(CGRect)rect
