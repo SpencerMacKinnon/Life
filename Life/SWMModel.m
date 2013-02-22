@@ -18,7 +18,7 @@
 @synthesize vertShaderPathname, fragShaderPathname;
 @synthesize numberOfFloatsInVertices, numberOfVertices, sizeOfVerticies;
 
--(id)init{
+- (id)init{
     self = [super init];
     if (self){
         numberOfVertices = 0;

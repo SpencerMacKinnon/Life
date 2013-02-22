@@ -27,10 +27,6 @@
 {
     [super viewDidLoad];
     
-    _grid = [[SWMGrid alloc] init];
-    _aspect = fabsf(self.view.bounds.size.width / self.view.bounds.size.height);
-    _projectionMatrix = GLKMatrix4MakePerspective(GLKMathDegreesToRadians(65.0f), _aspect, 0.1f, 100.0f);
-    
     self.context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
 
     if (!self.context) {
@@ -40,6 +36,13 @@
     GLKView *view = (GLKView *)self.view;
     view.context = self.context;
     view.drawableDepthFormat = GLKViewDrawableDepthFormat24;
+    
+    _aspect = fabsf(self.view.bounds.size.width / self.view.bounds.size.height);
+    _projectionMatrix = GLKMatrix4MakePerspective(GLKMathDegreesToRadians(65.0f), _aspect, 0.1f, 100.0f);
+    
+    GLKVector3 topLeft, bottomRight;
+    [self recalculateScreenBoundariesForGridWithProjectionMatrix:_projectionMatrix withTopLeft:&topLeft withBototmRight:&bottomRight];
+    _grid = [[SWMGrid alloc] initWithTopLeft:topLeft withBottomRight:bottomRight];
     
     [self setupGL];
 }
@@ -78,10 +81,7 @@
     glGenVertexArraysOES(1, &_vertexArray);
     glBindVertexArrayOES(_vertexArray);
     
-    for (SWMTile *tile in [_grid tiles]) {
-        
-        [tile setupGL];
-    }
+    [_grid setupGL];
 }
 
 - (void)tearDownGL
@@ -91,9 +91,7 @@
     
     glDeleteVertexArraysOES(1, &_vertexArray);
     
-    for (SWMTile *tile in [_grid tiles]) {
-        [tile tearDownGL];
-    }
+    [_grid tearDownGL];
 }
 
 #pragma mark - GLKView and GLKViewController delegate methods
@@ -103,20 +101,25 @@
     _aspect = fabsf(self.view.bounds.size.width / self.view.bounds.size.height);
     _projectionMatrix = GLKMatrix4MakePerspective(GLKMathDegreesToRadians(65.0f), _aspect, 0.1f, 100.0f);
     
-    for (SWMTile *tile in [_grid tiles]) {
-        GLKMatrix4 modelViewMatrix = [tile modelViewMatrix];
-        
-        GLKMatrix3 normalMatrix = GLKMatrix3InvertAndTranspose(GLKMatrix4GetMatrix3(modelViewMatrix), NULL);
-        GLKMatrix4 modelViewProjectionMatrix = GLKMatrix4Multiply(_projectionMatrix, modelViewMatrix);
-        
-        [tile setNormalMatrix:normalMatrix];
-        [tile setModelViewProjectionMatrix:modelViewProjectionMatrix];
+    for (NSArray *row in [_grid tiles]) {
+        for (SWMTileSpace *tileSpace in row) {
+            
+            GLKMatrix4 modelViewMatrix = [[tileSpace tile] modelViewMatrix];
+            
+            GLKMatrix3 normalMatrix = GLKMatrix3InvertAndTranspose(GLKMatrix4GetMatrix3(modelViewMatrix), NULL);
+            GLKMatrix4 modelViewProjectionMatrix = GLKMatrix4Multiply(_projectionMatrix, modelViewMatrix);
+            
+            [[tileSpace tile] setNormalMatrix:normalMatrix];
+            [[tileSpace tile] setModelViewProjectionMatrix:modelViewProjectionMatrix];
+        }
     }
     
     [self recalculateScreenBoundariesForGridWithProjectionMatrix:_projectionMatrix];
 }
 
-- (void)recalculateScreenBoundariesForGridWithProjectionMatrix:(GLKMatrix4)projectionMatrix {
+
+
+- (void)recalculateScreenBoundariesForGridWithProjectionMatrix:(GLKMatrix4)projectionMatrix withTopLeft:(GLKVector3 *)topLeft withBototmRight:(GLKVector3 *)bottomRight{
     
     float viewPortOriginX = self.view.bounds.origin.x;
     float viewPortOriginY = self.view.bounds.origin.y;
@@ -128,14 +131,20 @@
     GLKMatrix4 identityMatrix = GLKMatrix4Make(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
     
     GLKVector3 topLeftScreenCoordinate = [self worldSpacePixelLocation:viewPortOriginX withWindowCoordinateY:viewPortOriginY withViewPort:viewPort withModelViewMatrix:identityMatrix withProjectionMatrix:projectionMatrix];
-    GLKVector3 topRightScreenCoordinate = [self worldSpacePixelLocation:viewPortWidth withWindowCoordinateY:viewPortOriginY withViewPort:viewPort withModelViewMatrix:identityMatrix withProjectionMatrix:projectionMatrix];
-    GLKVector3 bottomLeftScreenCoordinate = [self worldSpacePixelLocation:viewPortOriginX withWindowCoordinateY:viewPortHeight withViewPort:viewPort withModelViewMatrix:identityMatrix withProjectionMatrix:projectionMatrix];
+    
     GLKVector3 bottomRightScreenCoordinate = [self worldSpacePixelLocation:viewPortWidth withWindowCoordinateY:viewPortHeight withViewPort:viewPort withModelViewMatrix:identityMatrix withProjectionMatrix:projectionMatrix];
     
-    [_grid setTopLeftBoundary:topLeftScreenCoordinate];
-    [_grid setTopRightBoundary:topRightScreenCoordinate];
-    [_grid setBottomLeftBoundary:bottomLeftScreenCoordinate];
-    [_grid setBottomRightBoundary:bottomRightScreenCoordinate];
+    *topLeft = topLeftScreenCoordinate;
+    *bottomRight = bottomRightScreenCoordinate;
+}
+
+- (void)recalculateScreenBoundariesForGridWithProjectionMatrix:(GLKMatrix4)projectionMatrix {
+    
+    GLKVector3 topLeft, bottomRight;
+    [self recalculateScreenBoundariesForGridWithProjectionMatrix:projectionMatrix withTopLeft:&topLeft withBototmRight:&bottomRight];
+    
+    [_grid setTopLeftBoundary:topLeft];
+    [_grid setBottomRightBoundary:bottomRight];
 }
 
 - (GLKVector3)worldSpacePixelLocation:(CGFloat)windowCoordinateX withWindowCoordinateY:(CGFloat)windowCoordinateY withViewPort:(GLKVector4) viewPort withModelViewMatrix:(GLKMatrix4) modelViewMatrix withProjectionMatrix:(GLKMatrix4) projectionMatrix {
@@ -200,10 +209,7 @@
     
     glBindVertexArrayOES(_vertexArray);
     
-    for (SWMTile *tile in [_grid tiles]) {
-        
-        [tile glkView:view drawInRect:rect];
-    }
+    [_grid glkView:view drawInRect:rect];
 }
 
 @end

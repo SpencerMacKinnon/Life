@@ -7,14 +7,24 @@
 //
 
 #import <Foundation/Foundation.h>
-#include "SWMTile.h"
+#include <stdlib.h>
+#include "SWMTileSpace.h"
 
 @interface SWMGrid : NSObject {
     NSMutableArray *_tiles;
     GLKVector3 _topLeftBoundary, _topRightBoundary, _bottomLeftBoundary, _bottomRightBoundary;
+    float _width, _height;
+    int _numberOfTilesWidth, _numberOfTilesHeight;
 }
 
 @property NSMutableArray *tiles;
-@property GLKVector3 topLeftBoundary, topRightBoundary, bottomLeftBoundary, bottomRightBoundary;
+@property GLKVector3 topLeftBoundary, bottomRightBoundary;
+
+- (id)initWithTopLeft:(GLKVector3)topLeft withBottomRight:(GLKVector3)bottomRight;
+- (bool)testWithinGridSpace:(CGPoint)point;
+- (GLKMatrix4)generateModelViewMatrixForRow:(int)row andColumn:(int)column;
+- (void)glkView:(GLKView *)view drawInRect:(CGRect)rect;
+- (void)setupGL;
+- (void)tearDownGL;
 
 @end

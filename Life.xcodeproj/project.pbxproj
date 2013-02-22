@@ -24,6 +24,7 @@
 		016FCA4A16BA4F280081975E /* SWMViewController_iPhone.xib in Resources */ = {isa = PBXBuildFile; fileRef = 016FCA4816BA4F280081975E /* SWMViewController_iPhone.xib */; };
 		016FCA4D16BA4F280081975E /* SWMViewController_iPad.xib in Resources */ = {isa = PBXBuildFile; fileRef = 016FCA4B16BA4F280081975E /* SWMViewController_iPad.xib */; };
 		019AEA7416D0899500602AF3 /* SWMGrid.m in Sources */ = {isa = PBXBuildFile; fileRef = 019AEA7316D0899500602AF3 /* SWMGrid.m */; };
+		01C4339916D1FDBB00BC4852 /* SWMTileSpace.m in Sources */ = {isa = PBXBuildFile; fileRef = 01C4339816D1FDBB00BC4852 /* SWMTileSpace.m */; };
 		01E9B7AC16C849F90076AD64 /* SWMModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 01E9B7AB16C849F90076AD64 /* SWMModel.m */; };
 		01E9B7AF16C84D0B0076AD64 /* SWMTile.m in Sources */ = {isa = PBXBuildFile; fileRef = 01E9B7AE16C84D0B0076AD64 /* SWMTile.m */; };
 /* End PBXBuildFile section */
@@ -52,6 +53,8 @@
 		016FCA4C16BA4F280081975E /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/SWMViewController_iPad.xib; sourceTree = "<group>"; };
 		019AEA7216D0899500602AF3 /* SWMGrid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SWMGrid.h; sourceTree = "<group>"; };
 		019AEA7316D0899500602AF3 /* SWMGrid.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SWMGrid.m; sourceTree = "<group>"; };
+		01C4339716D1FDBB00BC4852 /* SWMTileSpace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SWMTileSpace.h; sourceTree = "<group>"; };
+		01C4339816D1FDBB00BC4852 /* SWMTileSpace.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SWMTileSpace.m; sourceTree = "<group>"; };
 		01E9B7AA16C849F90076AD64 /* SWMModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SWMModel.h; sourceTree = "<group>"; };
 		01E9B7AB16C849F90076AD64 /* SWMModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SWMModel.m; sourceTree = "<group>"; };
 		01E9B7AD16C84D0B0076AD64 /* SWMTile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SWMTile.h; sourceTree = "<group>"; };
@@ -121,6 +124,8 @@
 				01E9B7AE16C84D0B0076AD64 /* SWMTile.m */,
 				019AEA7216D0899500602AF3 /* SWMGrid.h */,
 				019AEA7316D0899500602AF3 /* SWMGrid.m */,
+				01C4339716D1FDBB00BC4852 /* SWMTileSpace.h */,
+				01C4339816D1FDBB00BC4852 /* SWMTileSpace.m */,
 			);
 			path = Life;
 			sourceTree = "<group>";
@@ -215,6 +220,7 @@
 				01E9B7AC16C849F90076AD64 /* SWMModel.m in Sources */,
 				01E9B7AF16C84D0B0076AD64 /* SWMTile.m in Sources */,
 				019AEA7416D0899500602AF3 /* SWMGrid.m in Sources */,
+				01C4339916D1FDBB00BC4852 /* SWMTileSpace.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
