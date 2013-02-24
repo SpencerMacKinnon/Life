@@ -7,6 +7,7 @@
 //
 
 #import "SWMGrid.h"
+#define BUFFER_OFFSET(i) ((char *)NULL + (i))
 
 @implementation SWMGrid
 
@@ -20,36 +21,30 @@ float const TILE_SIDE_LENGTH = 0.0015f;
     
     self = [super init];
     if (self) {
-        
-        _topLeftBoundary = topLeft;
-        _bottomRightBoundary = bottomRight;
-        
-        _width = _bottomRightBoundary.x - _topLeftBoundary.x;
-        _height = _topLeftBoundary.y - _bottomRightBoundary.y;
-        
-        _numberOfTilesWidth = _width / TILE_SIDE_LENGTH ;
-        _numberOfTilesHeight = _height / TILE_SIDE_LENGTH;
-        
+        [self constructBoundariesWithTopLeft:topLeft andBottomRight:bottomRight];
         if (_numberOfTilesWidth == 0 || _numberOfTilesHeight == 0) {
             return NULL;
         }
-        
+        _va = [[SWMVertexArray alloc] init];
+        _shader = [[SWMShader alloc] init];
         _tiles = [[NSMutableArray alloc] init];
         
         for (int i=0; i < _numberOfTilesHeight; i++) {
             
             NSMutableArray *row = [[NSMutableArray alloc] init];
             for (int j=0; j < _numberOfTilesWidth; j++) {
-                SWMTileSpace *tileSpace = [[SWMTileSpace alloc] init];
+                SWMTile *tile = [[SWMTile alloc] initWithShader:_shader];
+                SWMTileSpace *tileSpace = [[SWMTileSpace alloc] initWithTile:tile];
                 
-                int asdf = arc4random() % 5;
-                if (asdf == 0) {
+                if (arc4random() % 8 == 0) {
                     [tileSpace setIsActive:true];
                 }
                 
                 [tileSpace setRow:i];
                 [tileSpace setColumn:j];
-                [[tileSpace tile] setModelViewMatrix:[self generateModelViewMatrixForRow:i andColumn:j]];
+                [[tileSpace tile] setModelViewMatrix:[self generateModelViewMatrixForRow:j andColumn:i]];
+                [[tileSpace tile] setVertexArray:_va];
+                [[tileSpace tile] loadShaders];
                 
                 [row addObject:tileSpace];
             }
@@ -68,19 +63,7 @@ float const TILE_SIDE_LENGTH = 0.0015f;
     float y = column * TILE_SIDE_LENGTH;
     y = _topLeftBoundary.y - y;
     
-    return GLKMatrix4MakeTranslation(x, y, -0.1f);
-}
-
-- (void)glkView:(GLKView *)view drawInRect:(CGRect)rect{
-    
-    for (NSArray *row in _tiles) {
-        for (SWMTileSpace *tileSpace in row) {
-            
-            if ([tileSpace isActive]) {
-                [[tileSpace tile] glkView:view drawInRect:rect];
-            }
-        }
-    }
+    return GLKMatrix4MakeTranslation(x, y, 0.0f);
 }
 
 - (bool)testWithinGridSpace:(CGPoint)point{
@@ -88,16 +71,59 @@ float const TILE_SIDE_LENGTH = 0.0015f;
     return true;
 }
 
--(void)setupGL{
+- (void)constructBoundariesWithTopLeft:(GLKVector3)topLeft andBottomRight:(GLKVector3)bottomRight{
+    _topLeftBoundary = topLeft;
+    _bottomRightBoundary = bottomRight;
+    
+    _width = _bottomRightBoundary.x - _topLeftBoundary.x;
+    _height = _topLeftBoundary.y - _bottomRightBoundary.y;
+    
+    _numberOfTilesWidth = _width / TILE_SIDE_LENGTH ;
+    _numberOfTilesHeight = _height / TILE_SIDE_LENGTH;
+}
+
+- (void)glkView:(GLKView *)view drawInRect:(CGRect)rect{
+    
+    GLint offset = 0;
     
     for (NSArray *row in _tiles) {
         for (SWMTileSpace *tileSpace in row) {
-            [[tileSpace tile] setupGL];
+            
+            if ([tileSpace isActive]) {
+                [[tileSpace tile] glkView:view drawInRect:rect];
+                glDrawArrays(GL_TRIANGLES, offset, 6);
+            }
+            offset += 6;
         }
     }
 }
 
+-(void)setupGL{
+    
+    glGenBuffers(1, &_vertexBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, _vertexBuffer);
+    
+    unsigned int totalDataSize = 0;
+    NSMutableData *vertexData = [[NSMutableData alloc] init];
+    
+    for (NSArray *row in _tiles) {
+        for (SWMTileSpace *tileSpace in row) {
+            SWMTile *tile = [tileSpace tile];
+            totalDataSize += [tile sizeOfVertices];
+            [vertexData appendBytes:[[tile vertexData] mutableBytes] length:[tile sizeOfVertices]];
+        }
+    }
+    
+    glBufferData(GL_ARRAY_BUFFER, totalDataSize, [vertexData mutableBytes], GL_STATIC_DRAW);
+    
+    glEnableVertexAttribArray(GLKVertexAttribPosition);
+    glVertexAttribPointer(GLKVertexAttribPosition, 3, GL_FLOAT, GL_FALSE, 24, BUFFER_OFFSET(0));
+    glEnableVertexAttribArray(GLKVertexAttribNormal);
+    glVertexAttribPointer(GLKVertexAttribNormal, 3, GL_FLOAT, GL_FALSE, 24, BUFFER_OFFSET(12));
+}
+
 - (void)tearDownGL{
+    glDeleteBuffers(1, &_vertexBuffer);
     for (NSArray *row in _tiles) {
         for (SWMTileSpace *tileSpace in row) {
             [[tileSpace tile] tearDownGL];

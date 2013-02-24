@@ -19,4 +19,6 @@
 @property bool isActive, isActiveNextTurn;
 @property int row, column;
 
+- (id)initWithTile:(SWMTile *)tile;
+
 @end

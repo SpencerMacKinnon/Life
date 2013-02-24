@@ -40,10 +40,6 @@
     _aspect = fabsf(self.view.bounds.size.width / self.view.bounds.size.height);
     _projectionMatrix = GLKMatrix4MakePerspective(GLKMathDegreesToRadians(65.0f), _aspect, 0.1f, 100.0f);
     
-    GLKVector3 topLeft, bottomRight;
-    [self recalculateScreenBoundariesForGridWithProjectionMatrix:_projectionMatrix withTopLeft:&topLeft withBototmRight:&bottomRight];
-    _grid = [[SWMGrid alloc] initWithTopLeft:topLeft withBottomRight:bottomRight];
-    
     [self setupGL];
 }
 
@@ -78,10 +74,17 @@
 {
     [EAGLContext setCurrentContext:self.context];
     
+    glEnable(GL_DEPTH_TEST);
+    
     glGenVertexArraysOES(1, &_vertexArray);
     glBindVertexArrayOES(_vertexArray);
     
+    GLKVector3 topLeft, bottomRight;
+    [self recalculateScreenBoundariesForGridWithProjectionMatrix:_projectionMatrix withTopLeft:&topLeft withBototmRight:&bottomRight];
+    _grid = [[SWMGrid alloc] initWithTopLeft:topLeft withBottomRight:bottomRight];
     [_grid setupGL];
+    
+    glBindVertexArrayOES(0);
 }
 
 - (void)tearDownGL
@@ -180,7 +183,7 @@
     inWindowCoordinates.x = (inWindowCoordinates.x - viewPort.x) / viewPort.z; // Convert our point to a range between 0..1
     inWindowCoordinates.y = (inWindowCoordinates.y - viewPort.y) / viewPort.w;
     
-    inWindowCoordinates.x = inWindowCoordinates.x * 2.0f - 1.0f; // Now move it to a range of -1..1, the view coordinates
+    inWindowCoordinates.x = inWindowCoordinates.x * 2.0f - 1.0f; // Now move it to a range of -1..1; the view coordinates
     inWindowCoordinates.y = inWindowCoordinates.y * 2.0f - 1.0f;
     inWindowCoordinates.z = inWindowCoordinates.z * 2.0f - 1.0f;
     

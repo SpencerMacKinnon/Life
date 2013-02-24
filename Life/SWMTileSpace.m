@@ -14,11 +14,11 @@
 @synthesize isActive=_isActive, isActiveNextTurn=_isActiveNextTurn;
 @synthesize row=_row, column=_column;
 
-- (id)init{
+- (id)initWithTile:(SWMTile *)tile{
     
     self = [super init];
     if (self) {
-        _tile = [[SWMTile alloc] init];
+        _tile = tile;
         _isActive = false;
         _isActiveNextTurn = false;
         _row = 0;

@@ -8,14 +8,17 @@
 
 #import <Foundation/Foundation.h>
 #import <GLKit/GLKit.h>
+#include "SWMVertexArray.h"
+#include "SWMShader.h"
 
 @interface SWMModel : NSObject
 {
     GLKMatrix4 _modelViewMatrix, _modelViewProjectionMatrix;
     GLKMatrix3 _normalMatrix;
-    GLKVector3 *_vertex;
     
-    GLuint _program, _vertexBuffer, _vertShader, _fragShader;    
+    SWMVertexArray *_vertexArray;
+    SWMShader *_shader;
+    
     // Uniform index.
     enum
     {
@@ -33,26 +36,21 @@
         NUM_ATTRIBUTES
     };
     
-    NSMutableData *vertexData;
-    NSString *vertShaderPathname, *fragShaderPathname;
-    unsigned long numberOfFloatsInVertices, numberOfVertices, sizeOfVerticies;
+    
 }
 
 @property GLKMatrix4 modelViewMatrix, modelViewProjectionMatrix;
 @property GLKMatrix3 normalMatrix;
-//@property GLuint program, vertShader, fragShader;
-//@property GLuint *vertexArray, *vertexBuffer;
-@property GLuint NUM_UNIFORMS, UNIFORM_MODELVIEWPROJECTION_MATRIX, UNIFORM_NORMAL_MATRIX;
-@property NSString *vertShaderPathname, *fragShaderPathname;
-@property unsigned long numberOfFloatsInVertices, numberOfVertices, sizeOfVerticies;
+@property SWMVertexArray *vertexArray;
+@property SWMShader *shader;
 
-- (BOOL)compileShader:(GLuint *)shader type:(GLenum)type file:(NSString *)file;
+- (id)initWithShader:(SWMShader *)shader;
 - (void)glkView:(GLKView *)view drawInRect:(CGRect)rect;
-- (BOOL)linkProgram:(GLuint)prog;
 - (BOOL)loadShaders;
-- (BOOL)validateProgram:(GLuint)prog;
-- (NSMutableData*)vertexData;
-- (BOOL)setupGL;
+- (unsigned long)numberOfFloatsInVertices;
+- (BOOL)releaseShaders;
+- (unsigned long)sizeOfVertices;
 - (void)tearDownGL;
+- (NSMutableData *)vertexData;
 
 @end
