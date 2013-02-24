@@ -13,8 +13,8 @@
 
 @interface SWMGrid : NSObject {
     NSMutableArray *_tiles;
-    GLKVector3 _topLeftBoundary, _topRightBoundary, _bottomLeftBoundary, _bottomRightBoundary;
-    GLuint /*_vertexArray,*/ _vertexBuffer;
+    GLKVector3 _topLeftBoundary, _bottomRightBoundary;
+    GLuint _vertexBuffer;
     float _width, _height;
     int _numberOfTilesWidth, _numberOfTilesHeight;
     SWMVertexArray *_va;
