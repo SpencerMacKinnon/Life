@@ -15,7 +15,7 @@
 @synthesize topLeftBoundary = _topLeftBoundary;
 @synthesize bottomRightBoundary = _bottomRightBoundary;
 
-float const TILE_SIDE_LENGTH = 0.003f;
+float const TILE_SIDE_LENGTH = 0.001f;
 
 - (id)initWithTopLeft:(GLKVector3)topLeft withBottomRight:(GLKVector3)bottomRight{
     

@@ -23,12 +23,12 @@
             // Data layout for each line below is:
             // positionX, positionY, positionZ,     normalX, normalY, normalZ,
             
-            0.003f, 0.0f, -0.1f,          0.0f, 0.0f, 1.0f,
+            0.001f, 0.0f, -0.1f,          0.0f, 0.0f, 1.0f,
             0.0f, 0.0f, -0.1f,         0.0f, 0.0f, 1.0f,
-            0.003f, -0.003f, -0.1f,         0.0f, 0.0f, 1.0f,
-            0.003f, -0.003f, -0.1f,         0.0f, 0.0f, 1.0f,
+            0.001f, -0.001f, -0.1f,         0.0f, 0.0f, 1.0f,
+            0.001f, -0.001f, -0.1f,         0.0f, 0.0f, 1.0f,
             0.0f, 0.0f, -0.1f,         0.0f, 0.0f, 1.0f,
-            0.0f, -0.003f, -0.1f,        0.0f, 0.0f, 1.0f
+            0.0f, -0.001f, -0.1f,        0.0f, 0.0f, 1.0f
             
         };
         
