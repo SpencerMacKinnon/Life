@@ -36,7 +36,7 @@ float const TILE_SIDE_LENGTH = 0.003f;
                 SWMTile *tile = [[SWMTile alloc] initWithShader:_shader];
                 SWMTileSpace *tileSpace = [[SWMTileSpace alloc] initWithTile:tile];
                 
-                if (arc4random() % 8 == 0) {
+                if (arc4random() % 4 == 0) {
                     [tileSpace setIsActive:true];
                 }
                 
@@ -88,12 +88,12 @@ float const TILE_SIDE_LENGTH = 0.003f;
     
     for (NSArray *row in _tiles) {
         for (SWMTileSpace *tileSpace in row) {
-            
+            int numberOfVertices = [[tileSpace tile] numberOfVertices];
             if ([tileSpace isActive]) {
                 [[tileSpace tile] glkView:view drawInRect:rect];
-                glDrawArrays(GL_TRIANGLES, offset, 6);
+                glDrawArrays(GL_TRIANGLES, offset, numberOfVertices);
             }
-            offset += 6;
+            offset += numberOfVertices;
         }
     }
 }

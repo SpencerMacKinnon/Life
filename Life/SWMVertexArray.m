@@ -10,10 +10,10 @@
 
 @implementation SWMVertexArray
 
-const int TOTAL_VERTICES = 12;
 @synthesize numberOfFloatsInVertices = _numberOfFloatsInVertices;
 @synthesize sizeOfVertices = _sizeOfVerticies;
 @synthesize vertexData = _vertexAndNormal;
+@synthesize numberOfVertices = _numberOfVertices;
 
 - (id)init{
     self = [super init];
@@ -35,6 +35,7 @@ const int TOTAL_VERTICES = 12;
         _sizeOfVerticies = sizeof(squareVertexData);
         _vertexAndNormal = [[NSMutableData alloc] initWithBytes:squareVertexData length:_sizeOfVerticies];
         _numberOfFloatsInVertices = 36;
+        _numberOfVertices = 6;
     }
     
     return self;

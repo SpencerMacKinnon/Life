@@ -13,10 +13,12 @@
     NSMutableData *_vertexAndNormal;
     GLuint _vertexBuffer;
     unsigned long _numberOfFloatsInVertices, _sizeOfVerticies;
+    int _numberOfVertices;
 }
 
 @property unsigned long numberOfFloatsInVertices;
 @property unsigned long sizeOfVertices;
+@property int numberOfVertices;
 @property NSMutableData *vertexData;
 
 @end

@@ -48,6 +48,7 @@
 - (void)glkView:(GLKView *)view drawInRect:(CGRect)rect;
 - (BOOL)loadShaders;
 - (unsigned long)numberOfFloatsInVertices;
+- (int)numberOfVertices;
 - (BOOL)releaseShaders;
 - (unsigned long)sizeOfVertices;
 - (void)tearDownGL;

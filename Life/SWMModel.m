@@ -37,6 +37,10 @@
     return [_vertexArray numberOfFloatsInVertices];
 }
 
+- (int)numberOfVertices {
+    return [_vertexArray numberOfVertices];
+}
+
 - (BOOL)loadShaders{
     uniforms[UNIFORM_MODELVIEWPROJECTION_MATRIX] = glGetUniformLocation([_shader program], "modelViewProjectionMatrix");
     uniforms[UNIFORM_NORMAL_MATRIX] = glGetUniformLocation([_shader program], "normalMatrix");
