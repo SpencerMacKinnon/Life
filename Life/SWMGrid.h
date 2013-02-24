@@ -24,6 +24,8 @@
 @property NSMutableArray *tiles;
 @property GLKVector3 topLeftBoundary, bottomRightBoundary;
 
+- (void)determineNextIteration;
+- (BOOL)determineNextIterationForTileWithRow:(int)row andColumn:(int)column cellIsAlive:(bool)cellIsAlive;
 - (id)initWithTopLeft:(GLKVector3)topLeft withBottomRight:(GLKVector3)bottomRight;
 - (bool)testWithinGridSpace:(CGPoint)point;
 - (GLKMatrix4)generateModelViewMatrixForRow:(int)row andColumn:(int)column;

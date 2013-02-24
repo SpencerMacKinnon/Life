@@ -69,6 +69,64 @@ float const TILE_SIDE_LENGTH = 0.003f;
     return GLKMatrix4MakeTranslation(x, y, 0.0f);
 }
 
+- (void)determineNextIteration{
+    for (int i = 0; i < [_tiles count]; i++) {
+        
+        NSArray *row = [_tiles objectAtIndex:i];
+        
+        for (int j = 0; j < [row count]; j++) {
+            SWMTileSpace *tileSpace = [row objectAtIndex:j];
+            bool isActiveNextTurn = [self determineNextIterationForTileWithRow:j andColumn:i cellIsAlive:[tileSpace isActive]];
+            
+//            if (isActiveNextTurn) {
+//                [[tileSpace tile] setDiffuseLightColour:GLKVector4Make(0.0f, 1.0f, 0.0f, 0.0f)];
+//            }
+//            else {
+//                [[tileSpace tile] setDiffuseLightColour:GLKVector4Make(0.0f, 0.0f, 0.0f, 0.0f)];
+//            }
+            
+            [tileSpace setIsActiveNextTurn:isActiveNextTurn];
+        }
+    }
+    
+    for (int i = 0; i < [_tiles count]; i++) {
+        for (int j = 0; j < [[_tiles objectAtIndex:i] count]; j++) {
+            [[[_tiles objectAtIndex:i] objectAtIndex:j] setIsActive:[[[_tiles objectAtIndex:i] objectAtIndex:j] isActiveNextTurn]];
+        }
+    }
+}
+- (BOOL)determineNextIterationForTileWithRow:(int)row andColumn:(int)column cellIsAlive:(bool)cellIsAlive{
+    
+    int count = 0;
+    
+    for (int i = -1; i < 2; i++) {
+        for (int j = -1; j < 2; j++) {
+            if (!(i == 0 && j == 0)) {
+                int x = (row + j) % _numberOfTilesWidth;
+                if (x < 0) {
+                    x = _numberOfTilesWidth - 1;
+                }
+                int y = (column + i) % _numberOfTilesHeight;
+                if (y < 0) {
+                    y = _numberOfTilesHeight - 1;
+                }
+                
+                if ([[[_tiles objectAtIndex:y] objectAtIndex:x] isActive]) {
+                    count++;
+                }
+            }
+        }
+    }
+    
+    if ( (count == 2) && (cellIsAlive) ){
+        return true;
+    } else if (count == 3) {
+        return true;
+    }
+    
+    return false;
+}
+
 - (bool)testWithinGridSpace:(CGPoint)point{
     
     return true;

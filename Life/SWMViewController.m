@@ -118,6 +118,13 @@
     }
     
     [self recalculateScreenBoundariesForGridWithProjectionMatrix:_projectionMatrix];
+    
+    static int updateRate = 0;
+    if (updateRate == 8) {
+        [_grid determineNextIteration];
+        updateRate = 0;
+    }
+    updateRate++;
 }
 
 
