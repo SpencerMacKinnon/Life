@@ -50,6 +50,9 @@ float const TILE_SIDE_LENGTH = 0.003f;
             }
             [_tiles addObject:row];
         }
+        
+        //[[[[_tiles objectAtIndex:0] objectAtIndex:0] tile] setDiffuseLightColour:GLKVector4Make(1.0f, 0.0f, 0.0f, 0.0f)];
+        //[[[[_tiles objectAtIndex:42] objectAtIndex:23] tile] setDiffuseLightColour:GLKVector4Make(0.0f, 0.0f, 1.0f, 1.0f)];
     }
     
     return self;
@@ -78,8 +81,10 @@ float const TILE_SIDE_LENGTH = 0.003f;
     _width = _bottomRightBoundary.x - _topLeftBoundary.x;
     _height = _topLeftBoundary.y - _bottomRightBoundary.y;
     
-    _numberOfTilesWidth = _width / TILE_SIDE_LENGTH ;
-    _numberOfTilesHeight = _height / TILE_SIDE_LENGTH;
+    // Add one here so we don't have a border around the edge
+    // TODO: Dynamically set side length to prevent a remainder
+    _numberOfTilesWidth = (_width / TILE_SIDE_LENGTH) + 1;
+    _numberOfTilesHeight = (_height / TILE_SIDE_LENGTH) + 1;
 }
 
 - (void)glkView:(GLKView *)view drawInRect:(CGRect)rect{

@@ -12,7 +12,7 @@
 @interface SWMTile : SWMModel
 {
     GLuint colourIndex;
-    GLKVector4 diffuseLightColour;
+    GLKVector4 _diffuseLightColour;
 }
 
 extern const int TOTAL_VERTICES;

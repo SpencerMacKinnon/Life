@@ -10,7 +10,7 @@
 
 @implementation SWMTile
 
-@synthesize diffuseLightColour;
+@synthesize diffuseLightColour = _diffuseLightColour;
 @synthesize colourIndex;
 
 - (id)init{
@@ -50,7 +50,7 @@
     // TODO: Refactor this to call only the models draw call, perhaps using a property bag?
     [super glkView:view drawInRect:rect];
     
-    glUniform4f(colourIndex, diffuseLightColour.x, diffuseLightColour.y, diffuseLightColour.z, diffuseLightColour.w);
+    glUniform4f(colourIndex, _diffuseLightColour.x, _diffuseLightColour.y, _diffuseLightColour.z, _diffuseLightColour.w);
 }
 
 @end
