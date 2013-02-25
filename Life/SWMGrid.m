@@ -34,22 +34,40 @@ float const TILE_SIDE_LENGTH = 0.001f;
             NSMutableArray *row = [[NSMutableArray alloc] init];
             for (int j=0; j < _numberOfTilesWidth; j++) {
                 SWMTile *tile = [[SWMTile alloc] initWithShader:_shader];
-                SWMTileSpace *tileSpace = [[SWMTileSpace alloc] initWithTile:tile];
                 
                 if (arc4random() % 4 == 0) {
-                    [tileSpace setIsActive:true];
+                    [tile setIsActive:true];
                 }
                 
-                [tileSpace setRow:i];
-                [tileSpace setColumn:j];
-                [[tileSpace tile] setModelViewMatrix:[self generateModelViewMatrixForRow:j andColumn:i]];
-                [[tileSpace tile] setVertexArray:_va];
-                [[tileSpace tile] loadShaders];
+                [tile setRow:i];
+                [tile setColumn:j];
+                [tile setModelViewMatrix:[self generateModelViewMatrixForRow:j andColumn:i]];
+                [tile setDiffuseLightColour:[self getRandomColour]];
+                [tile setVertexArray:_va];
+                [tile loadShaders];
                 
-                [row addObject:tileSpace];
+                [row addObject:tile];
             }
             [_tiles addObject:row];
         }
+        
+        // Colour index.
+        enum
+        {
+            RED,
+            YELLOW,
+            ORANGE,
+            BLUE,
+            PURPLE,
+            GREEN,
+            NUM_COLOURS
+        };
+        colours[RED] = GLKVector4Make(0.824, 0.192, 0.365, 0.0);
+        colours[YELLOW] = GLKVector4Make(0.969, 0.784, 0.031, 0.0);
+        colours[ORANGE] = GLKVector4Make(0.914, 0.533, 0.075, 0.0);
+        colours[BLUE] = GLKVector4Make(0.133, 0.71, 0.749, 0.0);
+        colours[PURPLE] = GLKVector4Make(0.529, 0.404, 0.651, 0.0);
+        colours[GREEN] = GLKVector4Make(0.533, 0.757, 0.204, 0.0);
         
         //[[[[_tiles objectAtIndex:0] objectAtIndex:0] tile] setDiffuseLightColour:GLKVector4Make(1.0f, 0.0f, 0.0f, 0.0f)];
         //[[[[_tiles objectAtIndex:42] objectAtIndex:23] tile] setDiffuseLightColour:GLKVector4Make(0.0f, 0.0f, 1.0f, 1.0f)];
@@ -70,28 +88,36 @@ float const TILE_SIDE_LENGTH = 0.001f;
 }
 
 - (void)determineNextIteration{
+    
+    //int totalTiles = _numberOfTilesWidth * _numberOfTilesHeight;
+    NSMutableArray *activeNextTurn = [[NSMutableArray alloc] init];
+    
     for (int i = 0; i < [_tiles count]; i++) {
         
         NSArray *row = [_tiles objectAtIndex:i];
         
         for (int j = 0; j < [row count]; j++) {
-            SWMTileSpace *tileSpace = [row objectAtIndex:j];
-            bool isActiveNextTurn = [self determineNextIterationForTileWithRow:j andColumn:i cellIsAlive:[tileSpace isActive]];
-            
-//            if (isActiveNextTurn) {
-//                [[tileSpace tile] setDiffuseLightColour:GLKVector4Make(0.0f, 1.0f, 0.0f, 0.0f)];
-//            }
-//            else {
-//                [[tileSpace tile] setDiffuseLightColour:GLKVector4Make(0.0f, 0.0f, 0.0f, 0.0f)];
-//            }
-            
-            [tileSpace setIsActiveNextTurn:isActiveNextTurn];
+            SWMTile *tile = [row objectAtIndex:j];
+            BOOL isActiveNextTurn = [self determineNextIterationForTileWithRow:j andColumn:i cellIsAlive:[tile isActive]];
+            [activeNextTurn addObject:[NSNumber numberWithBool:isActiveNextTurn]];
         }
     }
     
+    int activeIndex = 0;
+    
     for (int i = 0; i < [_tiles count]; i++) {
-        for (int j = 0; j < [[_tiles objectAtIndex:i] count]; j++) {
-            [[[_tiles objectAtIndex:i] objectAtIndex:j] setIsActive:[[[_tiles objectAtIndex:i] objectAtIndex:j] isActiveNextTurn]];
+        
+        NSArray *row = [_tiles objectAtIndex:i];
+        
+        for (int j = 0; j < [row count]; j++) {
+
+            BOOL isActiveNextTurn = [[activeNextTurn objectAtIndex:activeIndex] boolValue];
+            SWMTile *tile = [row objectAtIndex:j];
+            if ((![tile isActive]) && (isActiveNextTurn)) {
+                [tile setDiffuseLightColour:[self getRandomColour]];
+            }
+            [tile setIsActive:isActiveNextTurn];
+            activeIndex++;
         }
     }
 }
@@ -118,13 +144,11 @@ float const TILE_SIDE_LENGTH = 0.001f;
         }
     }
     
-    if ( (count == 2) && (cellIsAlive) ){
-        return true;
-    } else if (count == 3) {
-        return true;
-    }
-    
-    return false;
+    return (((count == 2) && cellIsAlive) || (count == 3));
+}
+
+- (GLKVector4)getRandomColour{
+    return colours[arc4random() % NUM_COLOURS];
 }
 
 - (bool)testWithinGridSpace:(CGPoint)point{
@@ -150,10 +174,10 @@ float const TILE_SIDE_LENGTH = 0.001f;
     GLint offset = 0;
     
     for (NSArray *row in _tiles) {
-        for (SWMTileSpace *tileSpace in row) {
-            int numberOfVertices = [[tileSpace tile] numberOfVertices];
-            if ([tileSpace isActive]) {
-                [[tileSpace tile] glkView:view drawInRect:rect];
+        for (SWMTile *tile in row) {
+            int numberOfVertices = [tile numberOfVertices];
+            if ([tile isActive]) {
+                [tile glkView:view drawInRect:rect];
                 glDrawArrays(GL_TRIANGLES, offset, numberOfVertices);
             }
             offset += numberOfVertices;
@@ -170,8 +194,7 @@ float const TILE_SIDE_LENGTH = 0.001f;
     NSMutableData *vertexData = [[NSMutableData alloc] init];
     
     for (NSArray *row in _tiles) {
-        for (SWMTileSpace *tileSpace in row) {
-            SWMTile *tile = [tileSpace tile];
+        for (SWMTile *tile in row) {
             totalDataSize += [tile sizeOfVertices];
             [vertexData appendBytes:[[tile vertexData] mutableBytes] length:[tile sizeOfVertices]];
         }
@@ -188,8 +211,8 @@ float const TILE_SIDE_LENGTH = 0.001f;
 - (void)tearDownGL{
     glDeleteBuffers(1, &_vertexBuffer);
     for (NSArray *row in _tiles) {
-        for (SWMTileSpace *tileSpace in row) {
-            [[tileSpace tile] tearDownGL];
+        for (SWMTile *tile in row) {
+            [tile tearDownGL];
         }
     }
 }

@@ -105,15 +105,15 @@
     _projectionMatrix = GLKMatrix4MakePerspective(GLKMathDegreesToRadians(65.0f), _aspect, 0.1f, 100.0f);
     
     for (NSArray *row in [_grid tiles]) {
-        for (SWMTileSpace *tileSpace in row) {
+        for (SWMTile *tile in row) {
             
-            GLKMatrix4 modelViewMatrix = [[tileSpace tile] modelViewMatrix];
+            GLKMatrix4 modelViewMatrix = [tile modelViewMatrix];
             
             GLKMatrix3 normalMatrix = GLKMatrix3InvertAndTranspose(GLKMatrix4GetMatrix3(modelViewMatrix), NULL);
             GLKMatrix4 modelViewProjectionMatrix = GLKMatrix4Multiply(_projectionMatrix, modelViewMatrix);
             
-            [[tileSpace tile] setNormalMatrix:normalMatrix];
-            [[tileSpace tile] setModelViewProjectionMatrix:modelViewProjectionMatrix];
+            [tile setNormalMatrix:normalMatrix];
+            [tile setModelViewProjectionMatrix:modelViewProjectionMatrix];
         }
     }
     

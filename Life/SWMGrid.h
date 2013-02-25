@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 #import <GLKit/GLKit.h>
 #include <stdlib.h>
-#include "SWMTileSpace.h"
+#include "SWMTile.h"
 
 @interface SWMGrid : NSObject {
     NSMutableArray *_tiles;
@@ -19,6 +19,19 @@
     int _numberOfTilesWidth, _numberOfTilesHeight;
     SWMVertexArray *_va;
     SWMShader *_shader;
+    
+    // Colour index.
+    enum
+    {
+        RED,
+        YELLOW,
+        ORANGE,
+        BLUE,
+        PURPLE,
+        GREEN,
+        NUM_COLOURS
+    };
+    GLKVector4 colours[NUM_COLOURS];
 }
 
 @property NSMutableArray *tiles;

@@ -11,14 +11,18 @@
 
 @interface SWMTile : SWMModel
 {
-    GLuint colourIndex;
+    GLuint _colourIndex;
     GLKVector4 _diffuseLightColour;
+    short _row, _column;
+    BOOL _isActive;
 }
 
 extern const int TOTAL_VERTICES;
 
 @property (nonatomic) GLKVector4 diffuseLightColour;
 @property GLuint colourIndex;
+@property short row, column;
+@property BOOL isActive;
 
 -(id)initWith:(GLKMatrix4)mvMatrix andColour:(GLKVector4)colour;
 

@@ -11,7 +11,10 @@
 @implementation SWMTile
 
 @synthesize diffuseLightColour = _diffuseLightColour;
-@synthesize colourIndex;
+@synthesize colourIndex = _colourIndex;
+@synthesize row = _row;
+@synthesize column = _column;
+@synthesize isActive = _isActive;
 
 - (id)init{
     
@@ -19,9 +22,11 @@
     if (self) {
         GLKVector4 diffuseLightColourBlack = GLKVector4Make(0.0, 0.0, 0.0, 0.0);
         GLKMatrix4 mvMatrix = GLKMatrix4MakeTranslation(0.0f, 0.0f, 0.0f);
-        
         [self setDiffuseLightColour:diffuseLightColourBlack];
         [self setModelViewMatrix: mvMatrix];
+        _row = 0;
+        _column = 0;
+        _isActive = false;
     }
     return self;
 }
@@ -31,6 +36,9 @@
     if (self) {
         [self setModelViewMatrix:mvMatrix];
         [self setDiffuseLightColour:colour];
+        _row = 0;
+        _column = 0;
+        _isActive = false;
     }
     
     return self;
@@ -39,7 +47,7 @@
 - (BOOL)loadShaders{
     // Override point for custom shader attributes.
     if ([super loadShaders]) {
-        colourIndex = glGetUniformLocation([_shader program], "diffuseColour");
+        _colourIndex = glGetUniformLocation([_shader program], "diffuseColour");
     }
     // TODO: Release on teardown
     [super releaseShaders];
@@ -50,7 +58,7 @@
     // TODO: Refactor this to call only the models draw call, perhaps using a property bag?
     [super glkView:view drawInRect:rect];
     
-    glUniform4f(colourIndex, _diffuseLightColour.x, _diffuseLightColour.y, _diffuseLightColour.z, _diffuseLightColour.w);
+    glUniform4f(_colourIndex, _diffuseLightColour.x, _diffuseLightColour.y, _diffuseLightColour.z, _diffuseLightColour.w);
 }
 
 @end
