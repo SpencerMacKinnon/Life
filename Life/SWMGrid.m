@@ -29,6 +29,13 @@ float const TILE_SIDE_LENGTH = 0.001f;
         _shader = [[SWMShader alloc] init];
         _tiles = [[NSMutableArray alloc] init];
         
+        colours[RED] = GLKVector4Make(0.824, 0.192, 0.365, 0.0);
+        colours[YELLOW] = GLKVector4Make(0.969, 0.784, 0.031, 0.0);
+        colours[ORANGE] = GLKVector4Make(0.914, 0.533, 0.075, 0.0);
+        colours[BLUE] = GLKVector4Make(0.133, 0.71, 0.749, 0.0);
+        colours[PURPLE] = GLKVector4Make(0.529, 0.404, 0.651, 0.0);
+        colours[GREEN] = GLKVector4Make(0.533, 0.757, 0.204, 0.0);
+        
         for (int i=0; i < _numberOfTilesHeight; i++) {
             
             NSMutableArray *row = [[NSMutableArray alloc] init];
@@ -50,27 +57,6 @@ float const TILE_SIDE_LENGTH = 0.001f;
             }
             [_tiles addObject:row];
         }
-        
-        // Colour index.
-        enum
-        {
-            RED,
-            YELLOW,
-            ORANGE,
-            BLUE,
-            PURPLE,
-            GREEN,
-            NUM_COLOURS
-        };
-        colours[RED] = GLKVector4Make(0.824, 0.192, 0.365, 0.0);
-        colours[YELLOW] = GLKVector4Make(0.969, 0.784, 0.031, 0.0);
-        colours[ORANGE] = GLKVector4Make(0.914, 0.533, 0.075, 0.0);
-        colours[BLUE] = GLKVector4Make(0.133, 0.71, 0.749, 0.0);
-        colours[PURPLE] = GLKVector4Make(0.529, 0.404, 0.651, 0.0);
-        colours[GREEN] = GLKVector4Make(0.533, 0.757, 0.204, 0.0);
-        
-        //[[[[_tiles objectAtIndex:0] objectAtIndex:0] tile] setDiffuseLightColour:GLKVector4Make(1.0f, 0.0f, 0.0f, 0.0f)];
-        //[[[[_tiles objectAtIndex:42] objectAtIndex:23] tile] setDiffuseLightColour:GLKVector4Make(0.0f, 0.0f, 1.0f, 1.0f)];
     }
     
     return self;
