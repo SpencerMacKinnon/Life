@@ -36,27 +36,9 @@ float const TILE_SIDE_LENGTH = 0.001f;
         colours[PURPLE] = GLKVector4Make(0.529, 0.404, 0.651, 0.0);
         colours[GREEN] = GLKVector4Make(0.533, 0.757, 0.204, 0.0);
         
-        for (int i=0; i < _numberOfTilesHeight; i++) {
-            
-            NSMutableArray *row = [[NSMutableArray alloc] init];
-            for (int j=0; j < _numberOfTilesWidth; j++) {
-                SWMTile *tile = [[SWMTile alloc] initWithShader:_shader];
-                
-                if (arc4random() % 4 == 0) {
-                    [tile setIsActive:true];
-                }
-                
-                [tile setRow:i];
-                [tile setColumn:j];
-                [tile setModelViewMatrix:[self generateModelViewMatrixForRow:j andColumn:i]];
-                [tile setDiffuseLightColour:[self getRandomColour]];
-                [tile setVertexArray:_va];
-                [tile loadShaders];
-                
-                [row addObject:tile];
-            }
-            [_tiles addObject:row];
-        }
+        _displayColours = false;
+        
+        [self createGrid];
     }
     
     return self;
@@ -137,6 +119,10 @@ float const TILE_SIDE_LENGTH = 0.001f;
     return colours[arc4random() % NUM_COLOURS];
 }
 
+- (void)toggleColour{
+    _displayColours = !_displayColours;
+}
+
 - (bool)testWithinGridSpace:(CGPoint)point{
     
     return true;
@@ -159,11 +145,11 @@ float const TILE_SIDE_LENGTH = 0.001f;
     
     GLint offset = 0;
     
-    for (NSArray *row in _tiles) {
+    for (NSMutableArray *row in _tiles) {
         for (SWMTile *tile in row) {
             int numberOfVertices = [tile numberOfVertices];
             if ([tile isActive]) {
-                [tile glkView:view drawInRect:rect];
+                [tile glkView:view drawInRect:rect withColour:_displayColours];
                 glDrawArrays(GL_TRIANGLES, offset, numberOfVertices);
             }
             offset += numberOfVertices;
@@ -196,10 +182,50 @@ float const TILE_SIDE_LENGTH = 0.001f;
 
 - (void)tearDownGL{
     glDeleteBuffers(1, &_vertexBuffer);
-    for (NSArray *row in _tiles) {
+    for (NSMutableArray *row in _tiles) {
         for (SWMTile *tile in row) {
             [tile tearDownGL];
         }
+    }
+    
+    [self emptyGrid];
+}
+
+- (void)renewGrid{
+    [self emptyGrid];
+    [self createGrid];
+}
+
+- (void)emptyGrid{
+    for (NSMutableArray *row in _tiles) {
+        [row removeAllObjects];
+    }
+    
+    [_tiles removeAllObjects];
+}
+
+- (void)createGrid{
+    
+    for (int i=0; i < _numberOfTilesHeight; i++) {
+        
+        NSMutableArray *row = [[NSMutableArray alloc] init];
+        for (int j=0; j < _numberOfTilesWidth; j++) {
+            SWMTile *tile = [[SWMTile alloc] initWithShader:_shader];
+            
+            if (arc4random() % 4 == 0) {
+                [tile setIsActive:true];
+            }
+            
+            [tile setRow:i];
+            [tile setColumn:j];
+            [tile setModelViewMatrix:[self generateModelViewMatrixForRow:j andColumn:i]];
+            [tile setDiffuseLightColour:[self getRandomColour]];
+            [tile setVertexArray:_va];
+            [tile loadShaders];
+            
+            [row addObject:tile];
+        }
+        [_tiles addObject:row];
     }
 }
 

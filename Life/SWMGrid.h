@@ -32,6 +32,8 @@
         NUM_COLOURS
     };
     GLKVector4 colours[NUM_COLOURS];
+    
+    BOOL _displayColours;
 }
 
 @property NSMutableArray *tiles;
@@ -43,7 +45,9 @@
 - (bool)testWithinGridSpace:(CGPoint)point;
 - (GLKMatrix4)generateModelViewMatrixForRow:(int)row andColumn:(int)column;
 - (void)glkView:(GLKView *)view drawInRect:(CGRect)rect;
+- (void)renewGrid;
 - (void)setupGL;
 - (void)tearDownGL;
+- (void)toggleColour;
 
 @end
