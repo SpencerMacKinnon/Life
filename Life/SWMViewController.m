@@ -37,6 +37,15 @@
     view.context = self.context;
     view.drawableDepthFormat = GLKViewDrawableDepthFormat24;
     
+    UILongPressGestureRecognizer *_lgpr = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleLongPress:)];
+    _lgpr.minimumPressDuration = 2.0;
+    [self.view addGestureRecognizer:_lgpr];
+    
+    UITapGestureRecognizer *_tgr = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTap:)];
+    _tgr.numberOfTapsRequired = 1;
+    [_tgr requireGestureRecognizerToFail:_lgpr];
+    [self.view addGestureRecognizer:_tgr];
+    
     _aspect = fabsf(self.view.bounds.size.width / self.view.bounds.size.height);
     _projectionMatrix = GLKMatrix4MakePerspective(GLKMathDegreesToRadians(65.0f), _aspect, 0.1f, 100.0f);
     
@@ -214,6 +223,14 @@
     glBindVertexArrayOES(_vertexArray);
     
     [_grid glkView:view drawInRect:rect];
+}
+
+-(void)handleTap:(UITapGestureRecognizer *)gestureRecognizer{
+    [_grid toggleColour];
+}
+
+-(void)handleLongPress:(UILongPressGestureRecognizer *)gestureRecognizer{
+    [_grid renewGrid];
 }
 
 @end

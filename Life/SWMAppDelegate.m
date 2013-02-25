@@ -21,6 +21,7 @@
     } else {
         self.viewController = [[SWMViewController alloc] initWithNibName:@"SWMViewController_iPad" bundle:nil];
     }
+    self.viewController.preferredFramesPerSecond = 5;
     self.window.rootViewController = self.viewController;
     [self.window makeKeyAndVisible];
     return YES;
