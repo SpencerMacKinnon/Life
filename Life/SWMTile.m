@@ -54,11 +54,16 @@
     return YES;
 }
 
-- (void)glkView:(GLKView *)view drawInRect:(CGRect)rect{
+- (void)glkView:(GLKView *)view drawInRect:(CGRect)rect withColour:(BOOL)colour{
     // TODO: Refactor this to call only the models draw call, perhaps using a property bag?
     [super glkView:view drawInRect:rect];
     
-    glUniform4f(_colourIndex, _diffuseLightColour.x, _diffuseLightColour.y, _diffuseLightColour.z, _diffuseLightColour.w);
+    if (colour) {
+        glUniform4f(_colourIndex, _diffuseLightColour.x, _diffuseLightColour.y, _diffuseLightColour.z, _diffuseLightColour.w);
+    }
+    else {
+        glUniform4f(_colourIndex, 0.0f, 0.0f, 0.0f, 0.0f);
+    }
 }
 
 @end

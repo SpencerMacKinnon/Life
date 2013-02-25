@@ -25,5 +25,6 @@ extern const int TOTAL_VERTICES;
 @property BOOL isActive;
 
 -(id)initWith:(GLKMatrix4)mvMatrix andColour:(GLKVector4)colour;
+- (void)glkView:(GLKView *)view drawInRect:(CGRect)rect withColour:(BOOL)colour;
 
 @end
